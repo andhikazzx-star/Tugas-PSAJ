@@ -1,0 +1,39 @@
+# Apache Configuration – e-Rapor Sisipan
+# Konfigurasi agar semua request diarahkan ke index.php
+
+Options -Indexes
+Options -MultiViews
+
+# Semua request ke root langsung ke index.php
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /e-rapor10/
+
+    # Jangan redirect file/folder yang ada
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirect semua ke index.php
+    RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Sembunyikan file sensitif
+<FilesMatch "\.(sql|md|log|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Larang akses ke folder core & config
+<IfModule mod_rewrite.c>
+    RewriteRule ^(config|core|models|controllers)/ - [F,L]
+</IfModule>
