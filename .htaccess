@@ -9,7 +9,7 @@ DirectoryIndex index.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /e-rapor10/
+    RewriteBase /Tugas-PSAJ/
 
     # Jangan redirect file/folder yang ada
     RewriteCond %{REQUEST_FILENAME} !-f

@@ -3,7 +3,7 @@
 define('APP_NAME', 'e-Rapor Sisipan');
 define('APP_VERSION', '1.0.0');
 define('SCHOOL_NAME', 'SMKN 10 Surabaya');
-define('BASE_URL', 'http://localhost/erapor');
+define('BASE_URL', 'http://localhost/Tugas-PSAJ');
 // Paths are now defined in bootstrap/app.php
 
 
