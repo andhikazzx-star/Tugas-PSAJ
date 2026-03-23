@@ -1,0 +1,16 @@
+Options -Indexes
+Options -MultiViews
+
+# Front controller
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Jangan redirect file/folder yang memang ada secara fisik di public
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirect sisa request ke index.php
+    RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>

@@ -1,22 +1,18 @@
 # Apache Configuration – e-Rapor Sisipan
-# Konfigurasi agar semua request diarahkan ke index.php
+# Konfigurasi root untuk mengarahkan traffic ke folder public
 
 Options -Indexes
 Options -MultiViews
 
-# Semua request ke root langsung ke index.php
-DirectoryIndex index.php
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Tugas-PSAJ/
 
-    # Jangan redirect file/folder yang ada
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-
-    # Redirect semua ke index.php
-    RewriteRule ^(.*)$ index.php [L,QSA]
+    # Sembunyikan file sensitif
+    RewriteRule ^(app|bootstrap|config|database|routes|views|vendor)/ - [F,L]
+    
+    # Jika request bukan untuk folder public, forward secara transparan ke public
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
 
 # Security Headers
@@ -27,14 +23,8 @@ DirectoryIndex index.php
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Sembunyikan file sensitif
-<FilesMatch "\.(sql|md|log|env)$">
+# Blokir ekstensi/file file konfigurasi
+<FilesMatch "\.(sql|md|log|env|lock)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Larang akses ke folder sensitif
-<IfModule mod_rewrite.c>
-    RewriteRule ^(app|bootstrap|config|database|routes|views|vendor)/ - [F,L]
-</IfModule>
-

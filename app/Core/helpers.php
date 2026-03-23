@@ -177,7 +177,7 @@ function get_param(string $key, mixed $default = ''): mixed
  */
 function asset(string $path): string
 {
-    return BASE_URL . '/public/' . ltrim($path, '/');
+    return BASE_URL . '/' . ltrim($path, '/');
 }
 
 /**
