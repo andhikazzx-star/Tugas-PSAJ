@@ -318,7 +318,8 @@
         <div class="cta-inner fade-in-up">
             <div class="cta-eyebrow"><i class="fas fa-rocket"></i> Mulai Sekarang</div>
             <h2 class="cta-title">Kelola Penilaian dengan<br>Lebih Mudah &amp; Efisien</h2>
-            <p class="cta-sub">Bergabung bersama seluruh guru dan wali kelas <?= htmlspecialchars(SCHOOL_NAME) ?> dalam satu platform terintegrasi.</p>
+            <p class="cta-sub">Bergabung bersama seluruh guru dan wali kelas <?= htmlspecialchars(SCHOOL_NAME) ?> dalam
+                satu platform terintegrasi.</p>
             <a href="?page=login" class="btn-hero-primary" style="display:inline-flex;">
                 <i class="fas fa-sign-in-alt"></i>
                 Masuk ke e-Rapor Sisipan
