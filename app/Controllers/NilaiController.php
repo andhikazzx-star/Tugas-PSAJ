@@ -249,7 +249,7 @@ class NilaiController
                 's1' => '-',
                 's2' => '-',
                 's3' => '-',
-                'pts' => $g['pengetahuan'],
+                'pts' => $g['pts'] ?? 0,
                 'sakit' => $g['sakit'] ?: 0,
                 'izin' => $g['izin'] ?: 0,
                 'alfa' => $g['alfa'] ?: 0
