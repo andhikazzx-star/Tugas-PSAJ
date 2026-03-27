@@ -246,9 +246,9 @@ class NilaiController
             $mapped = [
                 'mapel' => $g['mapel_nama'],
                 'kkm' => $g['kkm'] ?: 75,
-                's1' => '-',
-                's2' => '-',
-                's3' => '-',
+                's1' => $g['s1'] ?? '-',
+                's2' => $g['s2'] ?? '-',
+                's3' => $g['s3'] ?? '-',
                 'pts' => $g['pts'] ?? 0,
                 'sakit' => $g['sakit'] ?: 0,
                 'izin' => $g['izin'] ?: 0,

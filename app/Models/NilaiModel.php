@@ -15,6 +15,10 @@ class NilaiModel
      */
     public function getByMapelKelas(int $mapelId, int $kelasId, int $semester): array
     {
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $taId = $activeYear ? (int)$activeYear['id'] : 0;
+
         // 1. Get raw attendance totals from daily records (absensi_mapel table)
         $stmtAbs = $this->db->prepare(
             "SELECT am.siswa_id, 
@@ -35,17 +39,19 @@ class NilaiModel
                     n.id as nilai_id, n.pts, n.s1, n.s2, n.s3, n.status,
                     n.sakit, n.izin, n.alfa
              FROM siswa s
-             LEFT JOIN nilai n ON n.siswa_id = s.id AND n.mapel_id = ? AND n.semester = ?
+             LEFT JOIN nilai n ON n.siswa_id = s.id 
+                AND n.mapel_id = ? 
+                AND n.semester = ? 
+                AND n.tahun_ajaran_id = ?
              WHERE s.kelas_id = ? AND s.status = 'aktif'
              ORDER BY s.nama ASC"
         );
-        $stmt->execute([$mapelId, $semester, $kelasId]);
+        $stmt->execute([$mapelId, $semester, $taId, $kelasId]);
         $rows = $stmt->fetchAll();
 
         // 3. Merge: If final attendance in 'nilai' table is NULL/default, use daily totals
         foreach ($rows as &$row) {
             $sid = $row['siswa_id'];
-            // If the values are 0 or Null, we might want to suggest the harian totals
             if ($row['sakit'] == 0 && isset($dailyTotals[$sid]['s_harian'])) $row['sakit'] = $dailyTotals[$sid]['s_harian'];
             if ($row['izin'] == 0 && isset($dailyTotals[$sid]['i_harian'])) $row['izin'] = $dailyTotals[$sid]['i_harian'];
             if ($row['alfa'] == 0 && isset($dailyTotals[$sid]['a_harian'])) $row['alfa'] = $dailyTotals[$sid]['a_harian'];
@@ -113,6 +119,10 @@ class NilaiModel
      */
     public function getMapelStatusDiKelas(int $kelasId, int $semester): array
     {
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $taId = $activeYear ? (int)$activeYear['id'] : 0;
+
         $stmt = $this->db->prepare(
             "SELECT p.mapel_id, m.nama as mapel_nama, m.kategori,
                     CASE 
@@ -122,12 +132,15 @@ class NilaiModel
              FROM pengampuan p
              JOIN mapel m ON m.id = p.mapel_id
              JOIN siswa s ON s.kelas_id = p.kelas_id AND s.status = 'aktif'
-             LEFT JOIN nilai n ON n.siswa_id = s.id AND n.mapel_id = p.mapel_id AND n.semester = ?
+             LEFT JOIN nilai n ON n.siswa_id = s.id 
+                AND n.mapel_id = p.mapel_id 
+                AND n.semester = ?
+                AND n.tahun_ajaran_id = ?
              WHERE p.kelas_id = ? AND p.status = 'approved'
              GROUP BY p.mapel_id, m.nama, m.kategori
              ORDER BY m.kategori ASC, m.nama ASC"
         );
-        $stmt->execute([$semester, $kelasId]);
+        $stmt->execute([$semester, $taId, $kelasId]);
         return $stmt->fetchAll();
     }
 
@@ -136,14 +149,18 @@ class NilaiModel
      */
     public function getGradesBySiswa(int $siswaId, int $semester): array
     {
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $taId = $activeYear ? (int)$activeYear['id'] : 0;
+
         $stmt = $this->db->prepare(
             "SELECT n.*, m.nama as mapel_nama, m.kategori, m.kktp as kkm
              FROM nilai n
              JOIN mapel m ON m.id = n.mapel_id
-             WHERE n.siswa_id = ? AND n.semester = ?
+             WHERE n.siswa_id = ? AND n.semester = ? AND n.tahun_ajaran_id = ?
              ORDER BY m.kategori ASC, m.nama ASC"
         );
-        $stmt->execute([$siswaId, $semester]);
+        $stmt->execute([$siswaId, $semester, $taId]);
         return $stmt->fetchAll();
     }
 
