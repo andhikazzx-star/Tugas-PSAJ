@@ -240,8 +240,37 @@ class NilaiController
         $cw = $this->nilaiModel->getCatatanSiswa($siswaId, $semester);
         $ekskul = $this->nilaiModel->getEkskulBySiswa($siswaId, $semester);
 
+        // Group and map grades for the new template
+        $gradesUmum = [];
+        $gradesWilayah = [];
+        
+        foreach ($grades as $g) {
+            $mapped = [
+                'mapel' => $g['mapel_nama'],
+                'kkm' => $g['kkm'] ?: 75,
+                's1' => '-', 
+                's2' => '-', 
+                's3' => '-', 
+                'pts' => $g['pengetahuan'],
+                'sakit' => $g['sakit'] ?: 0,
+                'izin' => $g['izin'] ?: 0,
+                'alfa' => $g['alfa'] ?: 0
+            ];
+            
+            if ($g['kategori'] === 'Muatan Nasional' || $g['kategori'] === 'Muatan Kejuruan') {
+                $gradesUmum[] = $mapped;
+            } else {
+                $gradesWilayah[] = $mapped;
+            }
+        }
+
         // Fetch Homeroom Teacher (Wali Kelas) details
         $wali = $this->kelasModel->getWali((int) $siswa['kelas_id']);
+        if ($wali) {
+            $wali['nama'] = $wali['name'];
+        } else {
+            $wali = ['nama' => '-', 'nip' => '-'];
+        }
 
         // Fetch active year for year name
         $activeYear = $this->tahunAjaranModel->getActive();
@@ -250,9 +279,10 @@ class NilaiController
         // Data for template
         $data = [
             'siswa' => $siswa,
-            'grades' => $grades,
-            'sikap' => $cw['sikap'],
-            'catatan' => $cw['catatan'],
+            'grades_umum' => $gradesUmum,
+            'grades_wilayah' => $gradesWilayah,
+            'sikap' => $cw['sikap'] ?? '-',
+            'catatan' => $cw['catatan'] ?? '-',
             'ekskul' => $ekskul,
             'semester' => $semester,
             'wali' => $wali,
@@ -266,7 +296,7 @@ class NilaiController
         if (get_param('format') === 'pdf') {
             $this->generatePdf('nilai/print_sisipan', $data, "Rapor_Sisipan_{$siswa['nama']}.pdf");
         } else {
-            require_once VIEWS_PATH . '/nilai/print_sisipan.php';
+            require VIEWS_PATH . '/nilai/print_sisipan.php';
         }
     }
 
@@ -335,46 +365,7 @@ class NilaiController
         exit;
     }
 
-    /**
-     * Wali Kelas: Simpan Ekstrakurikuler
-     */
-    public function saveEkskul(): void
-    {
-        Middleware::requireRole([ROLE_WALI_KELAS]);
-        if (!isPost())
-            redirect('?page=monitoring');
 
-        $siswaId = (int) post('siswa_id');
-        $semester = (int) post('semester', 1);
-        $ekskulNames = post('ekskul_nama', []);
-        $ekskulKets = post('ekskul_ket', []);
-
-        $userId = Session::getUserId();
-        $siswa = $this->siswaModel->findById($siswaId);
-        if (!$siswa || !$this->checkWaliAccess((int) $siswa['kelas_id'], $userId)) {
-            flashError('Akses ditolak atau siswa tidak ditemukan.');
-            redirect('?page=monitoring');
-        }
-
-        $ekskulData = [];
-        foreach ($ekskulNames as $i => $name) {
-            if (!empty($name)) {
-                $ekskulData[] = [
-                    'nama' => $name,
-                    'keterangan' => $ekskulKets[$i] ?? ''
-                ];
-            }
-        }
-
-        try {
-            $this->nilaiModel->saveEkskul($siswaId, $semester, $ekskulData);
-            flashSuccess('Data ekstrakurikuler berhasil disimpan.');
-        } catch (Exception $e) {
-            flashError('Gagal menyimpan ekskul: ' . $e->getMessage());
-        }
-
-        redirect('?page=monitoring&kelas_id=' . $siswa['kelas_id']);
-    }
 
     private function checkWaliAccess(int $kelasId, int $userId): bool
     {

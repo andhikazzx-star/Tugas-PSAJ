@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -256,9 +256,9 @@
         <div class="container">
             <div class="section-header fade-in-up">
                 <div class="section-label light-mode"><i class="fas fa-users"></i> Peran Pengguna</div>
-                <h2 class="section-title white">Empat Peran, Satu Tujuan</h2>
+                <h2 class="section-title white">Empat Peran, Satu Sistem</h2>
                 <p class="section-subtitle white">Setiap pengguna memiliki akses dan wewenang yang terstruktur sesuai
-                    perannya.</p>
+                    perannya dalam proses penilaian.</p>
             </div>
             <div class="roles-grid">
                 <div class="role-card fade-in-up delay-1">
@@ -316,11 +316,12 @@
     <!-- ── CTA ──────────────────────────────────────────────────────── -->
     <section class="cta-section">
         <div class="cta-inner fade-in-up">
-            <h2 class="cta-title">Siap Memulai?</h2>
-            <p class="cta-sub">Masuk ke sistem dan mulai kelola penilaian sisipan secara efisien.</p>
+            <div class="cta-eyebrow"><i class="fas fa-rocket"></i> Mulai Sekarang</div>
+            <h2 class="cta-title">Kelola Penilaian dengan<br>Lebih Mudah &amp; Efisien</h2>
+            <p class="cta-sub">Bergabung bersama seluruh guru dan wali kelas <?= htmlspecialchars(SCHOOL_NAME) ?> dalam satu platform terintegrasi.</p>
             <a href="?page=login" class="btn-hero-primary" style="display:inline-flex;">
                 <i class="fas fa-sign-in-alt"></i>
-                Masuk ke e-Rapor
+                Masuk ke e-Rapor Sisipan
             </a>
         </div>
     </section>

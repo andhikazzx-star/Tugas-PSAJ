@@ -161,42 +161,22 @@ class NilaiModel
 
     public function getEkskulBySiswa(int $siswaId, int $semester): array
     {
-        // 1. Get from manual table (legacy/Wali Kelas)
-        $stmt1 = $this->db->prepare("SELECT nama_kegiatan, keterangan FROM ekskul WHERE siswa_id = ?");
-        $stmt1->execute([$siswaId]);
-        $legacyData = $stmt1->fetchAll();
+        // Get active year for correct filtering
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $tahunAjaran = $activeYear ? $activeYear['nama'] : '2024/2025';
 
-        // 2. Get from structured table (Pembina Ekskul)
-        $stmt2 = $this->db->prepare(
+        // Get ONLY from structured table (Pembina Ekskul)
+        $stmt = $this->db->prepare(
             "SELECT m.nama as nama_kegiatan, 
                     CONCAT('Predikat: ', en.nilai, '. ', en.keterangan) as keterangan
              FROM ekskul_nilai en
              JOIN master_ekskul m ON m.id = en.ekskul_id
-             WHERE en.siswa_id = ? AND en.semester = ?"
+             WHERE en.siswa_id = ? AND en.semester = ? AND en.tahun_ajaran = ?"
         );
-        $stmt2->execute([$siswaId, $semester]);
-        $newData = $stmt2->fetchAll();
-
-        return array_merge($legacyData, $newData);
+        $stmt->execute([$siswaId, $semester, $tahunAjaran]);
+        return $stmt->fetchAll();
     }
 
-    public function saveEkskul(int $siswaId, int $semester, array $data): void
-    {
-        try {
-            $this->db->beginTransaction();
-            $stmtDel = $this->db->prepare("DELETE FROM ekskul WHERE siswa_id = ?");
-            $stmtDel->execute([$siswaId]);
 
-            $stmtIns = $this->db->prepare(
-                "INSERT INTO ekskul (siswa_id, nama_kegiatan, keterangan) VALUES (?, ?, ?)"
-            );
-            foreach ($data as $e) {
-                $stmtIns->execute([$siswaId, $e['nama'], $e['keterangan']]);
-            }
-            $this->db->commit();
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw $e;
-        }
-    }
 }
