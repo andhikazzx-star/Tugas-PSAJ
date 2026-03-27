@@ -15,7 +15,7 @@ class MapelModel
             "SELECT m.*, j.nama as jurusan_nama 
              FROM mapel m 
              LEFT JOIN jurusan j ON j.id = m.jurusan_id 
-             ORDER BY m.nama ASC"
+             ORDER BY m.kategori ASC, m.nama ASC"
         );
         return $stmt->fetchAll();
     }
@@ -27,17 +27,17 @@ class MapelModel
         return $stmt->fetch();
     }
 
-    public function create(string $nama, int $jurusanId): int
+    public function create(string $nama, int $jurusanId, string $kategori, int $kktp): int
     {
-        $stmt = $this->db->prepare("INSERT INTO mapel (nama, jurusan_id) VALUES (?, ?)");
-        $stmt->execute([sanitize($nama), $jurusanId]);
+        $stmt = $this->db->prepare("INSERT INTO mapel (nama, jurusan_id, kategori, kktp) VALUES (?, ?, ?, ?)");
+        $stmt->execute([sanitize($nama), $jurusanId, $kategori, $kktp]);
         return (int) $this->db->lastInsertId();
     }
 
-    public function update(int $id, string $nama, int $jurusanId): bool
+    public function update(int $id, string $nama, int $jurusanId, string $kategori, int $kktp): bool
     {
-        $stmt = $this->db->prepare("UPDATE mapel SET nama = ?, jurusan_id = ? WHERE id = ?");
-        return $stmt->execute([sanitize($nama), $jurusanId, $id]);
+        $stmt = $this->db->prepare("UPDATE mapel SET nama = ?, jurusan_id = ?, kategori = ?, kktp = ? WHERE id = ?");
+        return $stmt->execute([sanitize($nama), $jurusanId, $kategori, $kktp, $id]);
     }
 
     public function delete(int $id): bool
