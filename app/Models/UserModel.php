@@ -132,40 +132,5 @@ class UserModel
         return $row ? (int) $row['id'] : false;
     }
 
-    // Notifications
-    public function createNotification(int $userId, string $message): bool
-    {
-        $stmt = $this->db->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
-        return $stmt->execute([$userId, $message]);
-    }
-
-    public function getNotifications(int $userId, int $limit = 10): array
-    {
-        $stmt = $this->db->prepare(
-            "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ?"
-        );
-        $stmt->execute([$userId, $limit]);
-        return $stmt->fetchAll();
-    }
-
-    public function countUnreadNotifications(int $userId): int
-    {
-        $stmt = $this->db->prepare(
-            "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0"
-        );
-        $stmt->execute([$userId]);
-        return (int) $stmt->fetchColumn();
-    }
-
-    public function markAsRead(int $notificationId): bool
-    {
-        $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE id = ?");
-        return $stmt->execute([$notificationId]);
-    }
-
-    public function markAllNotificationsRead(int $userId): bool
-    {
-        $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?");
-        return $stmt->execute([$userId]);
-    }
+    
 }

@@ -24,19 +24,11 @@ class DashboardController
         $roles = Session::getUserRoles();
         $user = $this->userModel->findById($userId);
 
-        // Tandai semua notifikasi sebagai dibaca
-        if (get_param('mark_read') === '1') {
-            $this->userModel->markAllNotificationsRead($userId);
-            redirect('?page=dashboard');
-        }
-
         $data = [
             'title' => 'Dashboard – ' . APP_NAME,
             'pageTitle' => 'Dashboard',
             'user' => $user,
             'roles' => $roles,
-            'notifications' => $this->userModel->getNotifications($userId, 5),
-            'unread' => $this->userModel->countUnreadNotifications($userId),
         ];
 
         // Data berdasarkan role

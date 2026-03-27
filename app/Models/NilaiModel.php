@@ -28,7 +28,8 @@ class NilaiModel
         // 2. Get grades and final attendance (overrides)
         $stmt = $this->db->prepare(
             "SELECT s.id as siswa_id, s.nama as siswa_nama, s.nis,
-                    n.id as nilai_id, n.pengetahuan, n.keterampilan, n.status,
+                    n.id as nilai_id, n.pengetahuan as pts, n.keterampilan, 
+                    n.s1, n.s2, n.s3, n.status,
                     k.sakit, k.izin, k.alfa
              FROM siswa s
              LEFT JOIN nilai n ON n.siswa_id = s.id AND n.mapel_id = ? AND n.semester = ?
@@ -62,19 +63,23 @@ class NilaiModel
             foreach ($data as $siswaId => $nilai) {
                 // Save Nilai
                 $stmt = $this->db->prepare(
-                    "INSERT INTO nilai (siswa_id, mapel_id, semester, pengetahuan, keterampilan, status)
-                     VALUES (?, ?, ?, ?, ?, 'lengkap')
+                    "INSERT INTO nilai (siswa_id, mapel_id, semester, pengetahuan, s1, s2, s3, status)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, 'lengkap')
                      ON DUPLICATE KEY UPDATE 
                         pengetahuan = VALUES(pengetahuan), 
-                        keterampilan = VALUES(keterampilan),
+                        s1 = VALUES(s1),
+                        s2 = VALUES(s2),
+                        s3 = VALUES(s3),
                         status = 'lengkap'"
                 );
                 $stmt->execute([
                     $siswaId,
                     $mapelId,
                     $semester,
-                    $nilai['pengetahuan'] !== '' ? $nilai['pengetahuan'] : null,
-                    $nilai['keterampilan'] !== '' ? $nilai['keterampilan'] : null
+                    $nilai['pts'] !== '' ? $nilai['pts'] : null,
+                    $nilai['s1'] !== '' ? $nilai['s1'] : 0,
+                    $nilai['s2'] !== '' ? $nilai['s2'] : 0,
+                    $nilai['s3'] !== '' ? $nilai['s3'] : 0
                 ]);
 
                 // Save Kehadiran

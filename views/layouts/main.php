@@ -151,42 +151,7 @@
                     </h1>
                 </div>
                 <div class="topbar-right">
-                    <!-- Notifications -->
-                    <div class="notif-wrapper">
-                        <button type="button" class="notif-btn" id="notifBtn">
-                            <i class="fas fa-bell"></i>
-                            <?php if (($unread ?? 0) > 0): ?>
-                                <span class="notif-badge">
-                                    <?= $unread ?>
-                                </span>
-                            <?php endif; ?>
-                        </button>
-                        <div class="notif-dropdown" id="notifDropdown">
-                            <div class="notif-header">
-                                <span>Notifikasi</span>
-                                <a href="?page=dashboard&mark_read=1" class="notif-mark-read">Tandai semua dibaca</a>
-                            </div>
-                            <div class="notif-body">
-                                <?php if (!empty($notifications)): ?>
-                                    <?php foreach ($notifications as $n): ?>
-                                        <div class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>">
-                                            <i class="fas fa-info-circle"></i>
-                                            <div>
-                                                <p>
-                                                    <?= e($n['message']) ?>
-                                                </p>
-                                                <small>
-                                                    <?= formatDate($n['created_at']) ?>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="notif-empty">Tidak ada notifikasi baru</div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </header>
 

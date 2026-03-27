@@ -6,13 +6,7 @@
  */
 function renderView(string $view, array $data = []): void
 {
-    // Auto-inject layout data jika user sedang login
-    if (Session::isLoggedIn() && !isset($data['notifications'])) {
-        $uModel = new UserModel();
-        $uid = Session::getUserId();
-        $data['notifications'] = $uModel->getNotifications($uid, 5);
-        $data['unread'] = $uModel->countUnreadNotifications($uid);
-    }
+
 
     // Default pageTitle dari title jika belum di-set
     if (!isset($data['pageTitle']) && isset($data['title'])) {

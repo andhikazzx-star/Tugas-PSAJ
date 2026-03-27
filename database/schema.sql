@@ -200,17 +200,7 @@ CREATE TABLE nilai (
     FOREIGN KEY (mapel_id) REFERENCES mapel(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ============================================================
--- TABEL NOTIFICATIONS
--- ============================================================
-CREATE TABLE notifications (
-    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id    INT UNSIGNED NOT NULL,
-    message    TEXT NOT NULL,
-    is_read    TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- ============================================================
 -- SAMPLE DATA

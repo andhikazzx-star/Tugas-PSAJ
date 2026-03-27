@@ -277,31 +277,7 @@ ob_start();
         </section>
     <?php endif; ?>
 
-    <!-- Notifikasi terbaru -->
-    <?php if (!empty($notifications)): ?>
-        <section class="section-full">
-            <div class="section-header">
-                <h2><i class="fas fa-bell"></i> Notifikasi Terbaru</h2>
-            </div>
-            <div class="notif-list-full">
-                <?php foreach ($notifications as $notif): ?>
-                    <div class="notif-item-full <?= $notif['is_read'] ? '' : 'unread' ?>">
-                        <div class="notif-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="notif-content">
-                            <p>
-                                <?= e($notif['message']) ?>
-                            </p>
-                            <small>
-                                <?= formatDate($notif['created_at']) ?>
-                            </small>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
-    <?php endif; ?>
+
 
 </div><!-- .dashboard-grid -->
 

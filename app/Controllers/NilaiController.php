@@ -128,8 +128,6 @@ class NilaiController
         );
 
         if ($result['success']) {
-            // Kirim notifikasi ke wali kelas
-            $this->notifyWaliKelas((int) $pengampuan['kelas_id'], $pengampuan['mapel_nama'] ?? '');
             flashSuccess($result['message']);
         } else {
             flashError($result['message']);
@@ -243,20 +241,20 @@ class NilaiController
         // Group and map grades for the new template
         $gradesUmum = [];
         $gradesWilayah = [];
-        
+
         foreach ($grades as $g) {
             $mapped = [
                 'mapel' => $g['mapel_nama'],
                 'kkm' => $g['kkm'] ?: 75,
-                's1' => '-', 
-                's2' => '-', 
-                's3' => '-', 
+                's1' => '-',
+                's2' => '-',
+                's3' => '-',
                 'pts' => $g['pengetahuan'],
                 'sakit' => $g['sakit'] ?: 0,
                 'izin' => $g['izin'] ?: 0,
                 'alfa' => $g['alfa'] ?: 0
             ];
-            
+
             if ($g['kategori'] === 'Muatan Nasional' || $g['kategori'] === 'Muatan Kejuruan') {
                 $gradesUmum[] = $mapped;
             } else {
@@ -429,16 +427,7 @@ class NilaiController
         // Update status kelas menjadi final
         $this->kelasModel->updateStatus($kelasId, STATUS_FINAL);
 
-        // Notifikasi ke semua guru yang mengampu kelas ini
-        $this->notifyAllGuruKelas($kelasId, $semester);
-
-        // Notifikasi ke wali kelas sendiri
         $kelas = $this->kelasModel->findById($kelasId);
-        $this->userModel->createNotification(
-            $userId,
-            "Finalisasi rapor kelas {$kelas['nama']} semester {$semester} berhasil dilakukan."
-        );
-
         flashSuccess("Kelas {$kelas['nama']} berhasil difinalisasi. Semua nilai sekarang read-only.");
         redirect('?page=monitoring&kelas_id=' . $kelasId . '&semester=' . $semester);
     }
@@ -489,33 +478,5 @@ class NilaiController
         ]);
     }
 
-    private function notifyWaliKelas(int $kelasId, string $mapelNama): void
-    {
-        $wali = $this->kelasModel->getWali($kelasId);
-        if ($wali) {
-            $kelas = $this->kelasModel->findById($kelasId);
-            $this->userModel->createNotification(
-                (int) $wali['id'],
-                "Nilai mata pelajaran {$mapelNama} untuk kelas {$kelas['nama']} telah diperbarui."
-            );
-        }
-    }
 
-    private function notifyAllGuruKelas(int $kelasId, int $semester): void
-    {
-        $db = getDB();
-        $stmt = $db->prepare(
-            "SELECT DISTINCT guru_id FROM pengampuan WHERE kelas_id = ? AND status = 'approved'"
-        );
-        $stmt->execute([$kelasId]);
-        $guruIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        $kelas = $this->kelasModel->findById($kelasId);
-        foreach ($guruIds as $guruId) {
-            $this->userModel->createNotification(
-                (int) $guruId,
-                "Rapor kelas {$kelas['nama']} semester {$semester} telah difinalisasi. Nilai tidak dapat diubah lagi."
-            );
-        }
-    }
 }
