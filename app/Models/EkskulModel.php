@@ -132,14 +132,14 @@ class EkskulModel
         return (bool) $stmt->fetch();
     }
 
-    public function createMaster(string $nama, string $pembinaNama = null): int
+    public function createMaster(string $nama, ?string $pembinaNama = null): int
     {
         $stmt = $this->db->prepare("INSERT INTO master_ekskul (nama, pembina_nama) VALUES (?, ?)");
         $stmt->execute([sanitize($nama), $pembinaNama ? sanitize($pembinaNama) : null]);
         return (int) $this->db->lastInsertId();
     }
 
-    public function updateMaster(int $id, string $nama, string $pembinaNama = null): bool
+    public function updateMaster(int $id, string $nama, ?string $pembinaNama = null): bool
     {
         $stmt = $this->db->prepare("UPDATE master_ekskul SET nama = ?, pembina_nama = ? WHERE id = ?");
         return $stmt->execute([sanitize($nama), $pembinaNama ? sanitize($pembinaNama) : null, $id]);
@@ -158,6 +158,12 @@ class EkskulModel
              ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)"
         );
         return $stmt->execute([$ekskulId, $userId]);
+    }
+
+    public function removePembina(int $ekskulId): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM ekskul_pembina WHERE ekskul_id = ?");
+        return $stmt->execute([$ekskulId]);
     }
 
     public function getPembinas(): array

@@ -39,7 +39,7 @@ ob_start();
                                         <div style="font-weight: 600; color: #1f2937; line-height: 1.2;"><?= e($e['pembina_nama']) ?></div>
                                         <div class="text-muted" style="font-size: 0.75rem; margin-top: 2px;">
                                             <i class="fas fa-envelope" style="font-size: 0.7rem;"></i> 
-                                            <?= strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $e['pembina_nama'])) ?>@gmail.com
+                                            <?= strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $e['pembina_nama'])) ?>@smkn10sby.sch.id
                                         </div>
                                     </div>
                                 </div>

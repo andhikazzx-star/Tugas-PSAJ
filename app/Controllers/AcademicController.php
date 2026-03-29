@@ -483,7 +483,7 @@ class AcademicController
         if (!empty($pembinaNama)) {
             $userModel = new UserModel();
             $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $pembinaNama));
-            $email = $cleanName . '@gmail.com';
+            $email = $cleanName . '@smkn10sby.sch.id';
             
             $user = $userModel->findByEmail($email);
             if (!$user) {
@@ -523,7 +523,7 @@ class AcademicController
         if (!empty($pembinaNama)) {
             $userModel = new UserModel();
             $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $pembinaNama));
-            $email = $cleanName . '@gmail.com';
+            $email = $cleanName . '@smkn10sby.sch.id';
             
             $user = $userModel->findByEmail($email);
             if (!$user) {
@@ -537,9 +537,7 @@ class AcademicController
             }
             $this->ekskulModel->setPembina($id, $userId);
         } else {
-            $this->db = getDB();
-            $stmt = $this->db->prepare("DELETE FROM ekskul_pembina WHERE ekskul_id = ?");
-            $stmt->execute([$id]);
+            $this->ekskulModel->removePembina($id);
         }
 
         flashSuccess('Ekskul berhasil diperbarui.' . (!empty($email) ? " (Email Pembina: {$email})" : ''));

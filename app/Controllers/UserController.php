@@ -36,12 +36,13 @@ class UserController
         }
 
         $name = sanitize(post('name'));
-        $email = sanitize(post('email'));
+        $emailPrefix = sanitize(post('email_prefix'));
+        $email = $emailPrefix . '@smkn10sby.sch.id';
         $password = post('password');
         $roleIds = post('role_ids', []);
         $nip = sanitize(post('nip'));
 
-        if (empty($name) || empty($email) || empty($password)) {
+        if (empty($name) || empty($emailPrefix) || empty($password)) {
             flashError('Semua field wajib diisi.');
             redirect('?page=admin.users');
         }
@@ -85,7 +86,8 @@ class UserController
 
         $id = (int) post('user_id');
         $name = sanitize(post('name'));
-        $email = sanitize(post('email'));
+        $emailPrefix = sanitize(post('email_prefix'));
+        $email = $emailPrefix . '@smkn10sby.sch.id';
         $password = post('password');
         $roleIds = post('role_ids', []);
         $nip = sanitize(post('nip'));

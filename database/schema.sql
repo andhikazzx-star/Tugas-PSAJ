@@ -207,6 +207,12 @@ CREATE TABLE catatan_wali (
     FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE settings (
+    `key`   VARCHAR(100) PRIMARY KEY,
+    `value` TEXT,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================================
 -- SAMPLE DATA
 -- ============================================================
@@ -259,5 +265,7 @@ INSERT INTO master_ekskul (nama, pembina_nama) VALUES
     ('Basket', 'Coach John');
 
 INSERT INTO ekskul_pembina (ekskul_id, user_id) VALUES (2, 9);
+
+INSERT INTO settings (`key`, `value`) VALUES ('tanggal_rapor_sisipan', '2026-03-29');
 
 SET foreign_key_checks = 1;

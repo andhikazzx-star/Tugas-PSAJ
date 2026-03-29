@@ -198,6 +198,7 @@ class NilaiController
             'siswa_list' => $siswaList,
             'kelas' => $kelas,
             'total_belum_lengkap' => $totalBelumLengkap,
+            'tanggal_rapor' => $this->settingModel->get('tanggal_rapor_sisipan', date('Y-m-d')),
         ]);
     }
 
@@ -263,9 +264,12 @@ class NilaiController
         }
 
         // Fetch Homeroom Teacher (Wali Kelas) details
-        $wali = $this->kelasModel->getWali((int) $siswa['kelas_id']);
-        if ($wali) {
-            $wali['nama'] = $wali['name'];
+        $waliRow = $this->kelasModel->getWali((int) $siswa['kelas_id']);
+        if ($waliRow) {
+            $wali = [
+                'nama' => $waliRow['name'],
+                'nip' => !empty($waliRow['nip']) ? $waliRow['nip'] : '-'
+            ];
         } else {
             $wali = ['nama' => '-', 'nip' => '-'];
         }
@@ -478,5 +482,23 @@ class NilaiController
         ]);
     }
 
+    public function saveTanggalRapor(): void
+    {
+        Middleware::requireRole([ROLE_WALI_KELAS]);
+        
+        if (!isPost()) redirect('?page=monitoring');
 
+        $tanggal = post('tanggal_rapor');
+        $kelasId = (int) post('kelas_id');
+        $semester = (int) post('semester');
+
+        if ($tanggal) {
+            $this->settingModel->set('tanggal_rapor_sisipan', $tanggal);
+            flashSuccess('Tanggal rapor sisipan berhasil diperbarui.');
+        } else {
+            flashError('Tanggal tidak boleh kosong.');
+        }
+
+        redirect('?page=monitoring&kelas_id=' . $kelasId . '&semester=' . $semester);
+    }
 }

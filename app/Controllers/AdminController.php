@@ -159,7 +159,7 @@ class AdminController
 
             // Hapus data transaksional
             $pdo->query("DELETE FROM nilai");
-            $pdo->query("DELETE FROM kehadiran");
+            $pdo->query("DELETE FROM absensi_mapel");
             $pdo->query("DELETE FROM catatan_wali");
             $pdo->query("DELETE FROM ekskul_nilai");
             $pdo->query("UPDATE kelas SET status = 'proses'");

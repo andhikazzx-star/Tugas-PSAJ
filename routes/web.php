@@ -27,6 +27,7 @@ return [
     'monitoring' => ['NilaiController', 'monitoring', [ROLE_WALI_KELAS]],
     'monitoring.finalisasi' => ['NilaiController', 'finalisasi', [ROLE_WALI_KELAS]],
     'monitoring.save_catatan' => ['NilaiController', 'saveCatatan', [ROLE_WALI_KELAS]],
+    'monitoring.save_tanggal' => ['NilaiController', 'saveTanggalRapor', [ROLE_WALI_KELAS]],
     'rapor.print' => ['NilaiController', 'printRapor', [ROLE_WALI_KELAS]],
     
     // Ekstrakurikuler – Pembina

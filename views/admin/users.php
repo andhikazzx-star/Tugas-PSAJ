@@ -82,8 +82,13 @@ ob_start();
                     <input type="text" name="nip" class="form-control" placeholder="NIP jika ada...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Email *</label>
-                    <input type="email" name="email" class="form-control" placeholder="email@..." required>
+                    <label class="form-label">Email / Username *</label>
+                    <div style="display: flex; align-items: stretch;">
+                        <input type="text" name="email_prefix" class="form-control" placeholder="username" required style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                        <div style="background: #e2e8f0; border: 1px solid var(--border); border-left: none; padding: 0 12px; display: flex; align-items: center; border-top-right-radius: 6px; border-bottom-right-radius: 6px; color: var(--secondary); font-size: 0.85rem; font-weight: 500;">
+                            @smkn10sby.sch.id
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password * (min. 6 karakter)</label>
@@ -128,8 +133,13 @@ ob_start();
                     <input type="text" name="nip" id="editUserNip" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Email *</label>
-                    <input type="email" name="email" id="editUserEmail" class="form-control" required>
+                    <label class="form-label">Email / Username *</label>
+                    <div style="display: flex; align-items: stretch;">
+                        <input type="text" name="email_prefix" id="editUserEmailPrefix" class="form-control" placeholder="username" required style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                        <div style="background: #e2e8f0; border: 1px solid var(--border); border-left: none; padding: 0 12px; display: flex; align-items: center; border-top-right-radius: 6px; border-bottom-right-radius: 6px; color: var(--secondary); font-size: 0.85rem; font-weight: 500;">
+                            @smkn10sby.sch.id
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password Baru (kosongkan jika tidak diubah)</label>
@@ -160,7 +170,9 @@ ob_start();
     function openEditUser(id, name, email, nip, roles) {
         document.getElementById('editUserId').value = id;
         document.getElementById('editUserName').value = name;
-        document.getElementById('editUserEmail').value = email;
+        // Split email to just show the prefix
+        const prefix = email.split('@')[0];
+        document.getElementById('editUserEmailPrefix').value = prefix;
         document.getElementById('editUserNip').value = nip;
         const roleArr = roles.split(', ').map(r => r.trim());
         document.querySelectorAll('.edit-role-cb').forEach(cb => {

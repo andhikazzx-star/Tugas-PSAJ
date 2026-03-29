@@ -27,14 +27,14 @@ class MapelModel
         return $stmt->fetch();
     }
 
-    public function create(string $nama, int $jurusanId, string $kategori, int $kktp): int
+    public function create(string $nama, int $jurusanId, string $kategori = 'Muatan Nasional', int $kktp = 75): int
     {
         $stmt = $this->db->prepare("INSERT INTO mapel (nama, jurusan_id, kategori, kktp) VALUES (?, ?, ?, ?)");
         $stmt->execute([sanitize($nama), $jurusanId, $kategori, $kktp]);
         return (int) $this->db->lastInsertId();
     }
 
-    public function update(int $id, string $nama, int $jurusanId, string $kategori, int $kktp): bool
+    public function update(int $id, string $nama, int $jurusanId, string $kategori = 'Muatan Nasional', int $kktp = 75): bool
     {
         $stmt = $this->db->prepare("UPDATE mapel SET nama = ?, jurusan_id = ?, kategori = ?, kktp = ? WHERE id = ?");
         return $stmt->execute([sanitize($nama), $jurusanId, $kategori, $kktp, $id]);

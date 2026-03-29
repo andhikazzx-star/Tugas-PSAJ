@@ -33,7 +33,30 @@ ob_start();
                     <option value="2" <?= $semester === 2 ? 'selected' : '' ?>>Genap (2)</option>
                 </select>
             </div>
+            <div class="form-group" style="min-width: 200px;">
+                <label class="form-label">Tanggal Terbit Rapor</label>
+                <button type="button" class="btn btn-outline-warning btn-block" onclick="setTanggalRapor()" style="height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fas fa-calendar-alt"></i> <span><?= formatDate($tanggal_rapor) ?></span>
+                </button>
+            </div>
         </form>
+        
+        <form id="formTanggalRapor" method="POST" action="?page=monitoring.save_tanggal" style="display:none;">
+            <?= csrfField() ?>
+            <input type="hidden" name="kelas_id" value="<?= $selected_kelas_id ?>">
+            <input type="hidden" name="semester" value="<?= $semester ?>">
+            <input type="date" name="tanggal_rapor" id="inputTanggalRapor" value="<?= e($tanggal_rapor) ?>">
+        </form>
+        
+        <script>
+            function setTanggalRapor() {
+                const date = prompt("Masukkan tanggal rapor (YYYY-MM-DD):", "<?= e($tanggal_rapor) ?>");
+                if (date) {
+                    document.getElementById('inputTanggalRapor').value = date;
+                    document.getElementById('formTanggalRapor').submit();
+                }
+            }
+        </script>
     </div>
 </div>
 
@@ -109,7 +132,7 @@ ob_start();
                             <tr>
                                 <th>No</th>
                                 <th>Nama Siswa</th>
-                                <th>Email/User</th>
+                                <th>NIS</th>
                                 <th>Aksi Wali Kelas</th>
                                 <th>Cetak Rapor</th>
                             </tr>
@@ -132,11 +155,6 @@ ob_start();
                                                 onclick="openCatatanModal(<?= $s['id'] ?>, '<?= e(addslashes($s['nama'])) ?>', '<?= e(addslashes($s['sikap'])) ?>', '<?= e(addslashes($s['catatan'])) ?>', <?= $semester ?>)">
                                                 <i class="fas fa-comment-dots"></i> Catatan & Sikap
                                             </button>
-                                             <button class="btn btn-sm btn-outline-info"
-                                                 data-ekskul='<?= json_encode($s['ekskul']) ?>'
-                                                 onclick="openEkskulModal(<?= $s['id'] ?>, '<?= e(addslashes($s['nama'])) ?>', this)">
-                                                 <i class="fas fa-hiking"></i> Ekskul
-                                             </button>
                                         </div>
                                     </td>
                                     <td>
@@ -197,24 +215,6 @@ ob_start();
     </div>
 </div>
 
-<!-- Modal Ekskul -->
-<div class="modal-overlay" id="modalEkskul">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 id="ekskulTitle">Ekstrakurikuler Siswa</h3>
-            <button onclick="closeModal('modalEkskul')" class="modal-close">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p class="text-muted mb-3" style="font-size:0.85rem;"><i class="fas fa-info-circle"></i> Data ekstrakurikuler diinput langsung oleh masing-masing Pembina Ekskul.</p>
-            <div id="ekskulContainer">
-                <!-- List Ekskul will go here -->
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button onclick="closeModal('modalEkskul')" class="btn btn-outline">Tutup</button>
-        </div>
-    </div>
-</div>
 
 <script>
     function openCatatanModal(id, nama, sikap, catatan, semester) {
@@ -250,30 +250,6 @@ ob_start();
             });
     });
 
-    function openEkskulModal(id, nama, btn) {
-        const title = document.getElementById('ekskulTitle');
-        const container = document.getElementById('ekskulContainer');
-        title.innerText = 'Ekstrakurikuler: ' + nama;
-        
-        // Ambil data ekskul dari attribute button
-        const ekskulData = JSON.parse(btn.getAttribute('data-ekskul'));
-        
-        if (ekskulData.length === 0) {
-            container.innerHTML = '<div class="empty-state" style="padding:20px 0;"><i class="fas fa-inbox fa-2x mb-2 text-muted"></i><p>Belum ada data ekstrakurikuler.</p></div>';
-        } else {
-            let html = '<div class="table-responsive"><table class="data-table" style="font-size:0.9rem;"><thead><tr><th>Nama Ekskul</th><th>Predikat & Keterangan</th></tr></thead><tbody>';
-            ekskulData.forEach(e => {
-                html += `<tr>
-                    <td><strong>${e.nama_kegiatan}</strong></td>
-                    <td class="text-left">${e.keterangan || '-'}</td>
-                </tr>`;
-            });
-            html += '</tbody></table></div>';
-            container.innerHTML = html;
-        }
-        
-        openModal('modalEkskul');
-    }
 </script>
 
 <?php
