@@ -30,14 +30,14 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section-label">Menu Utama</div>
-                <a href="?page=dashboard" class="nav-item <?= get_param('page') === 'dashboard' ? 'active' : '' ?>">
+                <a href="?page=dashboard" class="nav-item <?= ($_GET['page'] ?? '') === 'dashboard' ? 'is-active' : '' ?>">
                     <i class="fas fa-chart-pie"></i>
                     <span>Dashboard</span>
                 </a>
 
                 <?php if (Session::hasRole(ROLE_GURU_MAPEL)): ?>
                     <div class="nav-section-label">Guru</div>
-                    <a href="?page=nilai" class="nav-item <?= strpos(get_param('page'), 'nilai') === 0 ? 'active' : '' ?>">
+                    <a href="?page=nilai" class="nav-item <?= strpos(($_GET['page'] ?? ''), 'nilai') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-edit"></i>
                         <span>Input Nilai</span>
                     </a>
@@ -45,7 +45,7 @@
 
                 <?php if (Session::hasRole(ROLE_WALI_KELAS)): ?>
                     <div class="nav-section-label">Wali Kelas</div>
-                    <a href="?page=monitoring" class="nav-item <?= get_param('page') === 'monitoring' ? 'active' : '' ?>">
+                    <a href="?page=monitoring" class="nav-item <?= ($_GET['page'] ?? '') === 'monitoring' ? 'is-active' : '' ?>">
                         <i class="fas fa-file-invoice"></i>
                         <span>Kelola Rapor Sisipan</span>
                     </a>
@@ -54,7 +54,7 @@
                 <?php if (Session::hasRole(ROLE_KAPROGLI)): ?>
                     <div class="nav-section-label">Kaprogli</div>
                     <a href="?page=monitoring_kaprogli"
-                        class="nav-item <?= get_param('page') === 'monitoring_kaprogli' ? 'active' : '' ?>">
+                        class="nav-item <?= ($_GET['page'] ?? '') === 'monitoring_kaprogli' ? 'is-active' : '' ?>">
                         <i class="fas fa-chart-line"></i>
                         <span>Monitoring Jurusan</span>
                     </a>
@@ -63,12 +63,12 @@
                 <?php if (Session::hasRole(ROLE_PEMBINA_EKSKUL)): ?>
                     <div class="nav-section-label">Pembina Ekskul</div>
                     <a href="?page=ekskul.anggota"
-                        class="nav-item <?= strpos(get_param('page'), 'ekskul.anggota') === 0 || get_param('page') === 'ekskul.members' ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'ekskul.anggota') === 0 || ($_GET['page'] ?? '') === 'ekskul.members' ? 'is-active' : '' ?>">
                         <i class="fas fa-users"></i>
                         <span>Input Anggota Ekskul</span>
                     </a>
                     <a href="?page=ekskul.nilai"
-                        class="nav-item <?= strpos(get_param('page'), 'ekskul.nilai') === 0 || get_param('page') === 'ekskul.input' ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'ekskul.nilai') === 0 || ($_GET['page'] ?? '') === 'ekskul.input' ? 'is-active' : '' ?>">
                         <i class="fas fa-edit"></i>
                         <span>Input Nilai Ekskul</span>
                     </a>
@@ -77,42 +77,42 @@
                 <?php if (Session::hasRole(ROLE_ADMIN)): ?>
                     <div class="nav-section-label">Administrator</div>
                     <a href="?page=admin.users"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.users') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.users') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-users-cog"></i>
                         <span>Data Pengguna</span>
                     </a>
                     <a href="?page=admin.jurusan"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.jurusan') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.jurusan') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-sitemap"></i>
                         <span>Data Jurusan</span>
                     </a>
                     <a href="?page=admin.kelas"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.kelas') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.kelas') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-chalkboard"></i>
                         <span>Data Kelas</span>
                     </a>
                     <a href="?page=admin.mapel"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.mapel') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.mapel') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-book"></i>
                         <span>Mata Pelajaran</span>
                     </a>
                     <a href="?page=admin.siswa"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.siswa') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.siswa') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-user-graduate"></i>
                         <span>Data Siswa</span>
                     </a>
                     <a href="?page=admin.pengampuan"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.pengampuan') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.pengampuan') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-hands-helping"></i>
                         <span>Guru Mapel</span>
                     </a>
                     <a href="?page=admin.tahun_ajaran_baru"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.tahun_ajaran_baru') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.tahun_ajaran_baru') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-calendar-plus"></i>
                         <span>Tahun Ajaran Baru</span>
                     </a>
                     <a href="?page=admin.ekskul"
-                        class="nav-item <?= strpos(get_param('page'), 'admin.ekskul') === 0 ? 'active' : '' ?>">
+                        class="nav-item <?= strpos(($_GET['page'] ?? ''), 'admin.ekskul') === 0 ? 'is-active' : '' ?>">
                         <i class="fas fa-volleyball-ball"></i>
                         <span>Data Ekskul</span>
                     </a>

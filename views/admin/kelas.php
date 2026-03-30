@@ -47,7 +47,7 @@ ob_start();
                             <?= e($k['wali_nama'] ?: '-') ?>
                         </td>
                         <td>
-                            <?= e($k['tahun_ajaran_nama']) ?>
+                            <?= e($k['tahun_ajaran']) ?>
                         </td>
                         <td>
                             <?= statusKelasBadge($k['status']) ?>

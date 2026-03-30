@@ -19,9 +19,6 @@ return [
     // Nilai – Guru
     'nilai' => ['NilaiController', 'inputForm', [ROLE_GURU_MAPEL]],
     'nilai.save' => ['NilaiController', 'saveNilai', [ROLE_GURU_MAPEL]],
-    'presensi' => ['PresensiController', 'index', [ROLE_GURU_MAPEL]],
-    'presensi.input' => ['PresensiController', 'input', [ROLE_GURU_MAPEL]],
-    'presensi.save' => ['PresensiController', 'save', [ROLE_GURU_MAPEL]],
 
     // Monitoring – Wali Kelas
     'monitoring' => ['NilaiController', 'monitoring', [ROLE_WALI_KELAS]],

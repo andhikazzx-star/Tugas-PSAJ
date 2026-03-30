@@ -19,21 +19,7 @@ class NilaiModel
         $activeYear = $taModel->getActive();
         $taId = $activeYear ? (int)$activeYear['id'] : 0;
 
-        // 1. Get raw attendance totals from daily records (absensi_mapel table)
-        $stmtAbs = $this->db->prepare(
-            "SELECT am.siswa_id, 
-                    SUM(CASE WHEN am.status = 'S' THEN 1 ELSE 0 END) as s_harian,
-                    SUM(CASE WHEN am.status = 'I' THEN 1 ELSE 0 END) as i_harian,
-                    SUM(CASE WHEN am.status = 'A' THEN 1 ELSE 0 END) as a_harian
-             FROM absensi_mapel am
-             JOIN pengampuan p ON p.id = am.pengampuan_id
-             WHERE p.mapel_id = ? AND p.kelas_id = ? AND am.semester = ?
-             GROUP BY am.siswa_id"
-        );
-        $stmtAbs->execute([$mapelId, $kelasId, $semester]);
-        $dailyTotals = $stmtAbs->fetchAll(PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
-
-        // 2. Get existing grades and final attendance from unified 'nilai' table
+        // Get existing grades and attendance from unified 'nilai' table
         $stmt = $this->db->prepare(
             "SELECT s.id as siswa_id, s.nama as siswa_nama, s.nis,
                     n.id as nilai_id, n.pts, n.s1, n.s2, n.s3, n.status,
@@ -47,17 +33,7 @@ class NilaiModel
              ORDER BY s.nama ASC"
         );
         $stmt->execute([$mapelId, $semester, $taId, $kelasId]);
-        $rows = $stmt->fetchAll();
-
-        // 3. Merge: If final attendance in 'nilai' table is NULL/default, use daily totals
-        foreach ($rows as &$row) {
-            $sid = $row['siswa_id'];
-            if ($row['sakit'] == 0 && isset($dailyTotals[$sid]['s_harian'])) $row['sakit'] = $dailyTotals[$sid]['s_harian'];
-            if ($row['izin'] == 0 && isset($dailyTotals[$sid]['i_harian'])) $row['izin'] = $dailyTotals[$sid]['i_harian'];
-            if ($row['alfa'] == 0 && isset($dailyTotals[$sid]['a_harian'])) $row['alfa'] = $dailyTotals[$sid]['a_harian'];
-        }
-
-        return $rows;
+        return $stmt->fetchAll();
     }
 
     /**

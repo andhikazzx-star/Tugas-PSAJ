@@ -12,7 +12,7 @@ class KelasModel
     public function getAll(): array
     {
         $stmt = $this->db->query(
-            "SELECT k.*, j.nama as jurusan_nama, u.name as wali_nama, t.nama as tahun_ajaran_nama
+            "SELECT k.*, j.nama as jurusan_nama, u.name as wali_nama, t.nama as tahun_ajaran, t.nama as tahun_ajaran_nama
              FROM kelas k
              LEFT JOIN jurusan j ON j.id = k.jurusan_id
              LEFT JOIN wali_kelas wk ON wk.kelas_id = k.id
@@ -26,7 +26,7 @@ class KelasModel
     public function findById(int $id): array|false
     {
         $stmt = $this->db->prepare(
-            "SELECT k.*, j.nama as jurusan_nama, t.nama as tahun_ajaran_nama 
+            "SELECT k.*, j.nama as jurusan_nama, t.nama as tahun_ajaran, t.nama as tahun_ajaran_nama 
              FROM kelas k 
              LEFT JOIN jurusan j ON j.id = k.jurusan_id
              LEFT JOIN tahun_ajaran t ON t.id = k.tahun_ajaran_id
@@ -39,7 +39,7 @@ class KelasModel
     public function getByWali(int $userId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT k.*, j.nama as jurusan_nama, t.nama as tahun_ajaran_nama,
+            "SELECT k.*, j.nama as jurusan_nama, t.nama as tahun_ajaran, t.nama as tahun_ajaran_nama,
                     COUNT(s.id) as total_siswa
              FROM kelas k
              JOIN wali_kelas wk ON wk.kelas_id = k.id

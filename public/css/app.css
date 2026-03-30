@@ -173,14 +173,14 @@ img {
   color: #fff;
 }
 
-.nav-item.active {
+.nav-item.is-active {
   background: var(--primary);
   color: #fff;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(46, 125, 50, .25);
 }
 
-.nav-item.active i {
+.nav-item.is-active i {
   opacity: 1;
 }
 

@@ -1,12 +1,12 @@
 <?php
-$pageTitle = 'Input Nilai & Presensi';
+$pageTitle = 'Input Nilai Mapel';
 ob_start();
 ?>
 
 <div class="page-header-actions">
     <div>
-        <h2><i class="fas fa-edit"></i> Input Nilai & Presensi Mapel</h2>
-        <p class="text-muted">Kelola nilai sumatif, PTS, dan absensi kehadiran per mata pelajaran.</p>
+        <h2><i class="fas fa-edit"></i> Input Nilai Mapel</h2>
+        <p class="text-muted">Kelola nilai sumatif, PTS, dan rekap absensi per mata pelajaran.</p>
     </div>
     <div class="header-tools">
         <span class="badge badge-soft-success">Tahun Ajaran Aktif</span>
@@ -29,19 +29,12 @@ ob_start();
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-7">
                 <label class="form-label font-weight-bold">Semester</label>
                 <select name="semester" class="form-control" onchange="this.form.submit()" style="border-radius: 8px;">
                     <option value="1" <?= $semester === 1 ? 'selected' : '' ?>>1 (Ganjil)</option>
                     <option value="2" <?= $semester === 2 ? 'selected' : '' ?>>2 (Genap)</option>
                 </select>
-            </div>
-            <div class="col-md-4">
-                <?php if ($selected_id > 0): ?>
-                    <a href="?page=presensi&pengampuan_id=<?= $selected_id ?>&semester=<?= $semester ?>" class="btn btn-outline-primary btn-block" style="border-radius: 8px; border-style: dashed;">
-                        <i class="fas fa-calendar-alt"></i> Detail Presensi Harian
-                    </a>
-                <?php endif; ?>
             </div>
         </form>
     </div>
@@ -226,7 +219,7 @@ ob_start();
     <div class="card border-0 shadow-sm text-center py-5" style="border-radius: 12px;">
         <div class="card-body">
             <h3 class="text-muted">Pilih Mata Pelajaran & Kelas</h3>
-            <p class="text-muted mb-0">Silakan pilih pengampuan Anda untuk mulai menginput nilai dan absensi.</p>
+            <p class="text-muted mb-0">Silakan pilih pengampuan Anda untuk mulai menginput nilai.</p>
         </div>
     </div>
 <?php endif; ?>

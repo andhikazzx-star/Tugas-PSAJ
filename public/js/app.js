@@ -88,14 +88,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ── Active Nav Highlight ──────────────────────────────────
-    const currentPage = new URLSearchParams(window.location.search).get('page');
-    document.querySelectorAll('.nav-item').forEach(item => {
-        const href = item.getAttribute('href') || '';
-        const navPage = new URLSearchParams(href.split('?')[1] || '').get('page');
-        if (navPage && currentPage && (currentPage === navPage || currentPage.startsWith(navPage))) {
-            item.classList.add('active');
-        }
-    });
-
 });
