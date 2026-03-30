@@ -10,7 +10,7 @@ class LandingController
         }
 
         // Tampilkan landing page
-        require VIEWS_PATH . '/landing/index.php';
+        renderView('landing.index');
     }
 
     public function stats(): void

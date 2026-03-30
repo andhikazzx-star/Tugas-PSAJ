@@ -479,26 +479,26 @@ class AcademicController
         }
 
         $id = $this->ekskulModel->createMaster($nama, $pembinaNama);
+        $email = '-';
 
         if (!empty($pembinaNama)) {
-            $userModel = new UserModel();
             $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $pembinaNama));
             $email = $cleanName . '@smkn10sby.sch.id';
             
-            $user = $userModel->findByEmail($email);
+            $user = $this->userModel->findByEmail($email);
             if (!$user) {
-                $userId = $userModel->create($pembinaNama, $email, 'Password123');
-                $roleId = $userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
-                if ($roleId) $userModel->assignRole($userId, $roleId);
+                $userId = $this->userModel->create($pembinaNama, $email, 'Password123');
+                $roleId = $this->userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
+                if ($roleId) $this->userModel->assignRole($userId, $roleId);
             } else {
                 $userId = $user['id'];
-                $roleId = $userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
-                if ($roleId) $userModel->assignRole($userId, $roleId);
+                $roleId = $this->userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
+                if ($roleId) $this->userModel->assignRole($userId, $roleId);
             }
             $this->ekskulModel->setPembina($id, $userId);
         }
 
-        flashSuccess("Ekskul {$nama} berhasil ditambahkan. (Email Pembina: " . ($email ?? '-') . ")");
+        flashSuccess("Ekskul {$nama} berhasil ditambahkan. (Email Pembina: {$email})");
         redirect('?page=admin.ekskul');
     }
 
@@ -519,21 +519,21 @@ class AcademicController
             redirect('?page=admin.ekskul');
         }
         $this->ekskulModel->updateMaster($id, $nama, $pembinaNama);
+        $email = '';
 
         if (!empty($pembinaNama)) {
-            $userModel = new UserModel();
             $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $pembinaNama));
             $email = $cleanName . '@smkn10sby.sch.id';
             
-            $user = $userModel->findByEmail($email);
+            $user = $this->userModel->findByEmail($email);
             if (!$user) {
-                $userId = $userModel->create($pembinaNama, $email, 'Password123');
-                $roleId = $userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
-                if ($roleId) $userModel->assignRole($userId, $roleId);
+                $userId = $this->userModel->create($pembinaNama, $email, 'Password123');
+                $roleId = $this->userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
+                if ($roleId) $this->userModel->assignRole($userId, $roleId);
             } else {
                 $userId = $user['id'];
-                $roleId = $userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
-                if ($roleId) $userModel->assignRole($userId, $roleId);
+                $roleId = $this->userModel->getRoleIdByName(ROLE_PEMBINA_EKSKUL);
+                if ($roleId) $this->userModel->assignRole($userId, $roleId);
             }
             $this->ekskulModel->setPembina($id, $userId);
         } else {
@@ -563,10 +563,11 @@ class AcademicController
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
         $taActive = $this->tahunAjaranModel->getActive();
+        $taId = $taActive ? (int)$taActive['id'] : 0;
         $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
 
         $ekskul = $this->ekskulModel->findMasterById($ekskulId);
-        $siswaNilai = $this->ekskulModel->getSiswaNilai($ekskulId, $semester, $tahunAjaran);
+        $siswaNilai = $this->ekskulModel->getSiswaNilai($ekskulId, $semester, $taId);
 
         renderView('admin/ekskul/input', [
             'title' => 'Input Nilai Ekskul – ' . APP_NAME,
@@ -585,10 +586,10 @@ class AcademicController
         $ekskulId = (int) post('ekskul_id');
         $semester = (int) post('semester');
         $taActive = $this->tahunAjaranModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
         $nilaiData = post('nilai_ekskul', []);
 
-        $success = $this->ekskulModel->saveBatchNilai($ekskulId, $semester, $tahunAjaran, $nilaiData);
+        $success = $this->ekskulModel->saveBatchNilai($ekskulId, $semester, $taId, $nilaiData);
 
         if ($success) {
             flashSuccess('Nilai ekstrakurikuler berhasil disimpan.');
@@ -605,10 +606,11 @@ class AcademicController
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
         $taActive = $this->tahunAjaranModel->getActive();
+        $taId = $taActive ? (int)$taActive['id'] : 0;
         $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
 
         $ekskul = $this->ekskulModel->findMasterById($ekskulId);
-        $members = $this->ekskulModel->getOnlyMembers($ekskulId, $semester, $tahunAjaran);
+        $members = $this->ekskulModel->getOnlyMembers($ekskulId, $semester, $taId);
         
         $kelasModel = new KelasModel();
         $kelasList = $kelasModel->getAll();
@@ -640,9 +642,9 @@ class AcademicController
         $semester = (int) get_param('semester', 1);
         
         $taActive = $this->tahunAjaranModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
-        $this->ekskulModel->addMember($ekskulId, $siswaId, $semester, $tahunAjaran);
+        $this->ekskulModel->addMember($ekskulId, $siswaId, $semester, $taId);
         flashSuccess('Siswa berhasil ditambahkan sebagai anggota.');
         redirect("?page=admin.ekskul.members&ekskul_id={$ekskulId}&semester={$semester}");
     }
@@ -655,9 +657,9 @@ class AcademicController
         $semester = (int) get_param('semester', 1);
         
         $taActive = $this->tahunAjaranModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
-        $this->ekskulModel->removeMember($ekskulId, $siswaId, $semester, $tahunAjaran);
+        $this->ekskulModel->removeMember($ekskulId, $siswaId, $semester, $taId);
         flashSuccess('Siswa telah dihapus dari keanggotaan.');
         redirect("?page=admin.ekskul.members&ekskul_id={$ekskulId}&semester={$semester}");
     }
