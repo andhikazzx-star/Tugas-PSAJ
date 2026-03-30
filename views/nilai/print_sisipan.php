@@ -194,7 +194,6 @@
             transform: scale(1.05);
             background-color: #334155;
         }
-        }
     </style>
 </head>
 

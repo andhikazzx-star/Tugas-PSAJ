@@ -53,8 +53,8 @@ class EkskulController
         
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
-        $taActive = $this->taModel->getActive();
-        $taId = $taActive ? (int)$taActive['id'] : 0;
+        $tahunAjaran = $this->taModel->getActive();
+        $taId = $tahunAjaran ? (int)$tahunAjaran['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak. Anda bukan pembina untuk ekstrakurikuler ini.');
@@ -69,7 +69,7 @@ class EkskulController
             'ekskul' => $ekskul,
             'siswa_nilai' => $siswaNilai,
             'semester' => $semester,
-            'tahun_ajaran' => $tahunAjaran
+            'tahun_ajaran' => $tahunAjaran ? $tahunAjaran['nama'] : 'Unknown'
         ]);
     }
 
@@ -84,8 +84,8 @@ class EkskulController
         $userId = Session::getUserId();
         $ekskulId = (int) post('ekskul_id');
         $semester = (int) post('semester');
-        $taActive = $this->taModel->getActive();
-        $taId = $taActive ? (int)$taActive['id'] : 0;
+        $tahunAjaran = $this->taModel->getActive();
+        $taId = $tahunAjaran ? (int)$tahunAjaran['id'] : 0;
         $nilaiData = post('nilai_ekskul', []);
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
@@ -114,8 +114,8 @@ class EkskulController
         
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
-        $taActive = $this->taModel->getActive();
-        $taId = $taActive ? (int)$taActive['id'] : 0;
+        $tahunAjaran = $this->taModel->getActive();
+        $taId = $tahunAjaran ? (int)$tahunAjaran['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');
@@ -145,7 +145,7 @@ class EkskulController
             'kelas_list' => $kelasList,
             'kelas_filter' => $kelasFilter,
             'semester' => $semester,
-            'tahun_ajaran' => $tahunAjaran
+            'tahun_ajaran' => $tahunAjaran ? $tahunAjaran['nama'] : 'Unknown'
         ]);
     }
 
@@ -160,8 +160,8 @@ class EkskulController
         $siswaId = (int) get_param('siswa_id');
         $semester = (int) get_param('semester', 1);
         
-        $taActive = $this->taModel->getActive();
-        $taId = $taActive ? (int)$taActive['id'] : 0;
+        $tahunAjaran = $this->taModel->getActive();
+        $taId = $tahunAjaran ? (int)$tahunAjaran['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');
@@ -184,8 +184,8 @@ class EkskulController
         $siswaId = (int) get_param('siswa_id');
         $semester = (int) get_param('semester', 1);
         
-        $taActive = $this->taModel->getActive();
-        $taId = $taActive ? (int)$taActive['id'] : 0;
+        $tahunAjaran = $this->taModel->getActive();
+        $taId = $tahunAjaran ? (int)$tahunAjaran['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');

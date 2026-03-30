@@ -9,7 +9,7 @@ class SiswaModel
         $this->db = getDB();
     }
 
-    public function getAll(?int $kelasId = null, ?string $search = null): array
+    public function getAll(?int $kelasId = null, ?string $search = null, ?string $status = 'aktif'): array
     {
         $sql = "SELECT s.*, k.nama as kelas_nama, j.nama as jurusan_nama, t.nama as tahun_ajaran_nama
                 FROM siswa s
@@ -18,6 +18,11 @@ class SiswaModel
                 LEFT JOIN tahun_ajaran t ON t.id = k.tahun_ajaran_id
                 WHERE 1=1";
         $params = [];
+
+        if ($status) {
+            $sql .= " AND s.status = ?";
+            $params[] = $status;
+        }
 
         if ($kelasId) {
             $sql .= " AND s.kelas_id = ?";

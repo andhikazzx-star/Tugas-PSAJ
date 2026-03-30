@@ -75,47 +75,72 @@ class AdminController
         try {
             $pdo->beginTransaction();
 
-            // 1. Matikan tahun lama
+            // Get the current active year before deactivating
+            $activeYear = $this->tahunAjaranModel->getActive();
+            if (!$activeYear) {
+                throw new Exception("Tahun ajaran aktif tidak ditemukan.");
+            }
+            $oldYearId = (int)$activeYear['id'];
+
+            // 1. Deactivate all years
             $this->tahunAjaranModel->deactivateAll();
 
-            // 2. Buat tahun baru
+            // 2. Create and activate the new year
             $newYearId = $this->tahunAjaranModel->create($nextYearName, true);
 
-            // 3. Batch Rotation (Kenaikan Kelas)
-            $classes = $this->kelasModel->getAll();
-            foreach ($classes as $k) {
+            // 3. Process Promotion
+            // Get all classes in the old year
+            $stmt = $pdo->prepare("SELECT * FROM kelas WHERE tahun_ajaran_id = ?");
+            $stmt->execute([$oldYearId]);
+            $oldClasses = $stmt->fetchAll();
+
+            foreach ($oldClasses as $k) {
                 $oldTingkat = (int) $k['tingkat'];
                 $oldNama = $k['nama'];
-                $newTingkat = $oldTingkat;
-                $newNama = $oldNama;
+                $oldKelasId = (int) $k['id'];
+                $jurusanId = (int) $k['jurusan_id'];
 
-                if ($oldTingkat == 10) {
-                    $newTingkat = 11;
-                    $newNama = preg_replace('/^X\b/i', 'XI', $oldNama);
-                } elseif ($oldTingkat == 11) {
-                    $newTingkat = 12;
-                    $newNama = preg_replace('/^XI\b/i', 'XII', $oldNama);
-                } elseif ($oldTingkat == 12) {
-                    $stmtSiswa = $pdo->prepare("UPDATE siswa SET status = 'lulus' WHERE kelas_id = ? AND status = 'aktif'");
-                    $stmtSiswa->execute([$k['id']]);
-                    $newTingkat = 10;
+                if ($oldTingkat < 12) {
+                    // Promote to next level
+                    $newTingkat = $oldTingkat + 1;
+                    $newNama = $oldNama;
+                    
+                    if ($oldTingkat == 10) {
+                        $newNama = preg_replace('/^X\b/i', 'XI', $oldNama);
+                    } elseif ($oldTingkat == 11) {
+                        $newNama = preg_replace('/^XI\b/i', 'XII', $oldNama);
+                    }
+
+                    // Create new class for the new year
+                    $newKelasId = $this->kelasModel->create($newNama, $jurusanId, $newTingkat, $newYearId);
+
+                    // Move "aktif" students to the new class
+                    $stmtMove = $pdo->prepare("UPDATE siswa SET kelas_id = ? WHERE kelas_id = ? AND status = 'aktif'");
+                    $stmtMove->execute([$newKelasId, $oldKelasId]);
+                    
+                } else {
+                    // Class 12 - Graduates
+                    // Mark students as "lulus"
+                    $stmtLulus = $pdo->prepare("UPDATE siswa SET status = 'lulus' WHERE kelas_id = ? AND status = 'aktif'");
+                    $stmtLulus->execute([$oldKelasId]);
+
+                    // Optionally create a new Class 10 record for incoming freshman replacing this graduation slot
                     $newNama = preg_replace('/^XII\b/i', 'X', $oldNama);
+                    $this->kelasModel->create($newNama, $jurusanId, 10, $newYearId);
                 }
-
-                $stmtKelas = $pdo->prepare("UPDATE kelas SET nama = ?, tingkat = ?, tahun_ajaran_id = ?, status = 'proses' WHERE id = ?");
-                $stmtKelas->execute([$newNama, $newTingkat, $newYearId, $k['id']]);
             }
 
-            // 4. Reset Pengampuan (Guru harus diplot ulang setiap tahun)
-            $this->pengampuanModel->deleteAll();
+            // 4. Reset Assignment/Pengampuan for the new year (already empty since they were per class_id and year)
+            // But we should delete old mapping if they were global? They are linked to kelas_id.
+            $this->pengampuanModel->deleteAll(); 
 
             $pdo->commit();
-            flashSuccess("Berhasil! Tahun ajaran baru ({$nextYearName}) telah aktif.");
+            flashSuccess("Berhasil! Tahun ajaran baru ({$nextYearName}) telah aktif. Siswa telah dipromosikan dan yang lulus telah diarsipkan.");
             redirect('?page=dashboard');
 
         } catch (Exception $e) {
             $pdo->rollBack();
-            flashError('Terjadi kesalahan: ' . $e->getMessage());
+            flashError('Terjadi kesalahan saat promosi: ' . $e->getMessage());
             redirect('?page=admin.tahun_ajaran_baru');
         }
     }
