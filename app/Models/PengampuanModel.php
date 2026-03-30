@@ -93,6 +93,6 @@ class PengampuanModel
 
     public function deleteAll(): bool
     {
-        return $this->db->query("DELETE FROM pengampuan")->execute();
+        return $this->db->exec("DELETE FROM pengampuan") !== false;
     }
 }

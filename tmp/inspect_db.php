@@ -7,5 +7,5 @@ foreach ($tables as $table) {
     $cols = $db->query("DESCRIBE $table")->fetchAll();
     foreach ($cols as $col) {
         echo "  - {$col['Field']} ({$col['Type']})\n";
-    }
+    }``
 }

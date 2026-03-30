@@ -99,16 +99,17 @@ class JurusanModel
     public function getKelasProgressByJurusan(int $jurusanId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT k.id, k.nama, k.tahun_ajaran, k.status,
+            "SELECT k.id, k.nama, ta.nama as tahun_ajaran, k.status,
                     COUNT(DISTINCT p.id) as total_mapel,
                     COUNT(DISTINCT s.id) as total_siswa,
                     SUM(CASE WHEN n.status = 'lengkap' THEN 1 ELSE 0 END) as nilai_lengkap
              FROM kelas k
+             LEFT JOIN tahun_ajaran ta ON ta.id = k.tahun_ajaran_id
              LEFT JOIN pengampuan p ON p.kelas_id = k.id AND p.status = 'approved'
              LEFT JOIN siswa s ON s.kelas_id = k.id
              LEFT JOIN nilai n ON n.siswa_id = s.id AND n.mapel_id = p.mapel_id
              WHERE k.jurusan_id = ?
-             GROUP BY k.id, k.nama, k.tahun_ajaran, k.status
+             GROUP BY k.id, k.nama, ta.nama, k.status
              ORDER BY k.nama ASC"
         );
         $stmt->execute([$jurusanId]);

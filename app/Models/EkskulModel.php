@@ -31,15 +31,15 @@ class EkskulModel
         return $stmt->fetchAll();
     }
 
-    public function getSiswaNilai(int $ekskulId, int $semester, string $tahunAjaran): array
+    public function getSiswaNilai(int $ekskulId, int $semester, int $taId): array
     {
-        return $this->getOnlyMembers($ekskulId, $semester, $tahunAjaran);
+        return $this->getOnlyMembers($ekskulId, $semester, $taId);
     }
 
     /**
      * Get ONLY students who are signed up for this ekskul
      */
-    public function getOnlyMembers(int $ekskulId, int $semester, string $tahunAjaran): array
+    public function getOnlyMembers(int $ekskulId, int $semester, int $taId): array
     {
         $stmt = $this->db->prepare(
             "SELECT s.id as siswa_id, s.nama as siswa_nama, k.nama as kelas_nama,
@@ -49,47 +49,47 @@ class EkskulModel
              JOIN kelas k ON k.id = s.kelas_id
              WHERE en.ekskul_id = ? 
                 AND en.semester = ? 
-                AND en.tahun_ajaran = ?
+                AND en.tahun_ajaran_id = ?
                 AND s.status = 'aktif'
              ORDER BY k.nama ASC, s.nama ASC"
         );
-        $stmt->execute([$ekskulId, $semester, $tahunAjaran]);
+        $stmt->execute([$ekskulId, $semester, $taId]);
         return $stmt->fetchAll();
     }
 
     /**
      * Add member to ekskul (initialize with default grade B)
      */
-    public function addMember(int $ekskulId, int $siswaId, int $semester, string $tahunAjaran): bool
+    public function addMember(int $ekskulId, int $siswaId, int $semester, int $taId): bool
     {
         $stmt = $this->db->prepare(
-            "INSERT IGNORE INTO ekskul_nilai (ekskul_id, siswa_id, semester, tahun_ajaran, nilai)
+            "INSERT IGNORE INTO ekskul_nilai (ekskul_id, siswa_id, semester, tahun_ajaran_id, nilai)
              VALUES (?, ?, ?, ?, 'B')"
         );
-        return $stmt->execute([$ekskulId, $siswaId, $semester, $tahunAjaran]);
+        return $stmt->execute([$ekskulId, $siswaId, $semester, $taId]);
     }
 
     /**
      * Remove member from ekskul
      */
-    public function removeMember(int $ekskulId, int $siswaId, int $semester, string $tahunAjaran): bool
+    public function removeMember(int $ekskulId, int $siswaId, int $semester, int $taId): bool
     {
         $stmt = $this->db->prepare(
             "DELETE FROM ekskul_nilai 
-             WHERE ekskul_id = ? AND siswa_id = ? AND semester = ? AND tahun_ajaran = ?"
+             WHERE ekskul_id = ? AND siswa_id = ? AND semester = ? AND tahun_ajaran_id = ?"
         );
-        return $stmt->execute([$ekskulId, $siswaId, $semester, $tahunAjaran]);
+        return $stmt->execute([$ekskulId, $siswaId, $semester, $taId]);
     }
 
     /**
      * Save/Update ekskul grades in batch
      */
-    public function saveBatchNilai(int $ekskulId, int $semester, string $tahunAjaran, array $data): bool
+    public function saveBatchNilai(int $ekskulId, int $semester, int $taId, array $data): bool
     {
         try {
             $this->db->beginTransaction();
             $stmt = $this->db->prepare(
-                "INSERT INTO ekskul_nilai (ekskul_id, siswa_id, nilai, keterangan, semester, tahun_ajaran)
+                "INSERT INTO ekskul_nilai (ekskul_id, siswa_id, nilai, keterangan, semester, tahun_ajaran_id)
                  VALUES (?, ?, ?, ?, ?, ?)
                  ON DUPLICATE KEY UPDATE nilai = VALUES(nilai), keterangan = VALUES(keterangan)"
             );
@@ -103,7 +103,7 @@ class EkskulModel
                         $val['nilai'] ?: 'B',
                         $val['keterangan'] ?: '',
                         $semester,
-                        $tahunAjaran
+                        $taId
                     ]);
                 }
             }

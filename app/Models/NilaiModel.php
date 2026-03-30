@@ -166,21 +166,29 @@ class NilaiModel
 
     public function getCatatanSiswa(int $siswaId, int $semester): array
     {
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $taId = $activeYear ? (int)$activeYear['id'] : 0;
+
         $stmt = $this->db->prepare(
-            "SELECT * FROM catatan_wali WHERE siswa_id = ? AND semester = ? LIMIT 1"
+            "SELECT * FROM catatan_wali WHERE siswa_id = ? AND semester = ? AND tahun_ajaran_id = ? LIMIT 1"
         );
-        $stmt->execute([$siswaId, $semester]);
+        $stmt->execute([$siswaId, $semester, $taId]);
         return $stmt->fetch() ?: ['sikap' => '', 'catatan' => ''];
     }
 
     public function saveCatatan(int $siswaId, int $semester, ?string $sikap, ?string $catatan): bool
     {
+        $taModel = new TahunAjaranModel();
+        $activeYear = $taModel->getActive();
+        $taId = $activeYear ? (int)$activeYear['id'] : 0;
+
         $stmt = $this->db->prepare(
-            "INSERT INTO catatan_wali (siswa_id, semester, sikap, catatan)
-             VALUES (?, ?, ?, ?)
+            "INSERT INTO catatan_wali (siswa_id, semester, tahun_ajaran_id, sikap, catatan)
+             VALUES (?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE sikap = VALUES(sikap), catatan = VALUES(catatan)"
         );
-        return $stmt->execute([$siswaId, $semester, $sikap, $catatan]);
+        return $stmt->execute([$siswaId, $semester, $taId, $sikap, $catatan]);
     }
 
     public function getEkskulBySiswa(int $siswaId, int $semester): array
@@ -194,9 +202,9 @@ class NilaiModel
                     CONCAT('Predikat: ', en.nilai, '. ', en.keterangan) as keterangan
              FROM ekskul_nilai en
              JOIN master_ekskul m ON m.id = en.ekskul_id
-             WHERE en.siswa_id = ? AND en.semester = ? AND en.tahun_ajaran = ?"
+             WHERE en.siswa_id = ? AND en.semester = ? AND en.tahun_ajaran_id = ?"
         );
-        $stmt->execute([$siswaId, $semester, $tahunAjaran]);
+        $stmt->execute([$siswaId, $semester, $activeYear ? (int)$activeYear['id'] : 0]);
         return $stmt->fetchAll();
     }
 }

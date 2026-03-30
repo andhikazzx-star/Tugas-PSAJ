@@ -23,7 +23,7 @@ class TahunAjaranModel
 
     public function deactivateAll(): bool
     {
-        return $this->db->query("UPDATE tahun_ajaran SET is_active = 0")->execute();
+        return $this->db->exec("UPDATE tahun_ajaran SET is_active = 0") !== false;
     }
 
     public function create(string $nama, bool $isActive = false): int

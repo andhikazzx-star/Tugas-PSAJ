@@ -155,16 +155,17 @@ CREATE TABLE ekskul_pembina (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE ekskul_nilai (
-    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ekskul_id    INT UNSIGNED NOT NULL,
-    siswa_id     INT UNSIGNED NOT NULL,
-    semester     TINYINT UNSIGNED NOT NULL DEFAULT 1,
-    tahun_ajaran VARCHAR(20) NOT NULL,
-    nilai        ENUM('A', 'B', 'C', 'D') DEFAULT 'B',
-    keterangan   TEXT,
-    UNIQUE KEY uk_ekskul_nilai (ekskul_id, siswa_id, semester, tahun_ajaran),
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ekskul_id       INT UNSIGNED NOT NULL,
+    siswa_id        INT UNSIGNED NOT NULL,
+    semester        TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    tahun_ajaran_id INT UNSIGNED NOT NULL,
+    nilai           ENUM('A', 'B', 'C', 'D') DEFAULT 'B',
+    keterangan      TEXT,
+    UNIQUE KEY uk_ekskul_nilai (ekskul_id, siswa_id, semester, tahun_ajaran_id),
     FOREIGN KEY (ekskul_id) REFERENCES master_ekskul(id) ON DELETE CASCADE,
-    FOREIGN KEY (siswa_id)  REFERENCES siswa(id)         ON DELETE CASCADE
+    FOREIGN KEY (siswa_id)  REFERENCES siswa(id)         ON DELETE CASCADE,
+    FOREIGN KEY (tahun_ajaran_id) REFERENCES tahun_ajaran(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
@@ -198,13 +199,15 @@ CREATE TABLE nilai (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE catatan_wali (
-    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    siswa_id   INT UNSIGNED NOT NULL,
-    semester   TINYINT UNSIGNED NOT NULL,
-    sikap      TEXT,
-    catatan    TEXT,
-    UNIQUE KEY uk_catatan (siswa_id, semester),
-    FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    siswa_id        INT UNSIGNED NOT NULL,
+    semester        TINYINT UNSIGNED NOT NULL,
+    tahun_ajaran_id INT UNSIGNED NOT NULL,
+    sikap           TEXT,
+    catatan         TEXT,
+    UNIQUE KEY uk_catatan (siswa_id, tahun_ajaran_id, semester),
+    FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE,
+    FOREIGN KEY (tahun_ajaran_id) REFERENCES tahun_ajaran(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE settings (

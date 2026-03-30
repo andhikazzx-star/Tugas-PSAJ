@@ -54,7 +54,7 @@ class EkskulController
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
         $taActive = $this->taModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak. Anda bukan pembina untuk ekstrakurikuler ini.');
@@ -62,7 +62,7 @@ class EkskulController
         }
 
         $ekskul = $this->ekskulModel->findMasterById($ekskulId);
-        $siswaNilai = $this->ekskulModel->getSiswaNilai($ekskulId, $semester, $tahunAjaran);
+        $siswaNilai = $this->ekskulModel->getSiswaNilai($ekskulId, $semester, $taId);
 
         renderView('ekskul/input', [
             'title' => 'Input Nilai Ekskul – ' . APP_NAME,
@@ -85,7 +85,7 @@ class EkskulController
         $ekskulId = (int) post('ekskul_id');
         $semester = (int) post('semester');
         $taActive = $this->taModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
         $nilaiData = post('nilai_ekskul', []);
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
@@ -93,7 +93,7 @@ class EkskulController
             redirect('?page=ekskul.nilai');
         }
 
-        $success = $this->ekskulModel->saveBatchNilai($ekskulId, $semester, $tahunAjaran, $nilaiData);
+        $success = $this->ekskulModel->saveBatchNilai($ekskulId, $semester, $taId, $nilaiData);
 
         if ($success) {
             flashSuccess('Nilai ekstrakurikuler berhasil disimpan.');
@@ -115,7 +115,7 @@ class EkskulController
         $ekskulId = (int) get_param('ekskul_id');
         $semester = (int) get_param('semester', 1);
         $taActive = $this->taModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');
@@ -123,7 +123,7 @@ class EkskulController
         }
 
         $ekskul = $this->ekskulModel->findMasterById($ekskulId);
-        $members = $this->ekskulModel->getOnlyMembers($ekskulId, $semester, $tahunAjaran);
+        $members = $this->ekskulModel->getOnlyMembers($ekskulId, $semester, $taId);
         
         $kelasModel = new KelasModel();
         $kelasList = $kelasModel->getAll();
@@ -161,14 +161,14 @@ class EkskulController
         $semester = (int) get_param('semester', 1);
         
         $taActive = $this->taModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');
             redirect('?page=ekskul.anggota');
         }
 
-        $this->ekskulModel->addMember($ekskulId, $siswaId, $semester, $tahunAjaran);
+        $this->ekskulModel->addMember($ekskulId, $siswaId, $semester, $taId);
         flashSuccess('Siswa berhasil ditambahkan sebagai anggota.');
         redirect("?page=ekskul.members&ekskul_id={$ekskulId}&semester={$semester}");
     }
@@ -185,14 +185,14 @@ class EkskulController
         $semester = (int) get_param('semester', 1);
         
         $taActive = $this->taModel->getActive();
-        $tahunAjaran = $taActive ? $taActive['nama'] : '2024/2025';
+        $taId = $taActive ? (int)$taActive['id'] : 0;
 
         if (!Session::hasRole(ROLE_ADMIN) && !$this->ekskulModel->isPembina($userId, $ekskulId)) {
             flashError('Akses ditolak.');
             redirect('?page=ekskul.anggota');
         }
 
-        $this->ekskulModel->removeMember($ekskulId, $siswaId, $semester, $tahunAjaran);
+        $this->ekskulModel->removeMember($ekskulId, $siswaId, $semester, $taId);
         flashSuccess('Siswa telah dihapus dari keanggotaan.');
         redirect("?page=ekskul.members&ekskul_id={$ekskulId}&semester={$semester}");
     }
